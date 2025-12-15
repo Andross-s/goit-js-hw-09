@@ -1,0 +1,54 @@
+const form = document.querySelector('.feedback-form');
+const STORAGE_KEY = 'feedback-form-state';
+
+// 1️⃣ Обʼєкт поза функціями
+let formData = {
+  email: '',
+  message: '',
+};
+
+// 2️⃣ Відновлення даних зі сховища при завантаженні
+const savedData = localStorage.getItem(STORAGE_KEY);
+
+if (savedData) {
+  const parsedData = JSON.parse(savedData);
+
+  formData = {
+    email: parsedData.email || '',
+    message: parsedData.message || '',
+  };
+
+  form.elements.email.value = formData.email;
+  form.elements.message.value = formData.message;
+}
+
+// 3️⃣ Делегування події input
+form.addEventListener('input', event => {
+  const { name, value } = event.target;
+
+  if (!name) return;
+
+  formData[name] = value.trim();
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+});
+
+// 4️⃣ Сабміт форми
+form.addEventListener('submit', event => {
+  event.preventDefault();
+
+  const { email, message } = formData;
+
+  if (email === '' || message === '') {
+    alert('Fill please all fields');
+    return;
+  }
+
+  console.log(formData);
+
+  localStorage.removeItem(STORAGE_KEY);
+
+  formData = { email: '', message: '' };
+
+  form.reset();
+});
